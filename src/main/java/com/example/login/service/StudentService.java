@@ -1,5 +1,6 @@
 package com.example.login.service;
 
+import com.example.login.dto.LoginRequestDto;
 import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
 import com.example.login.model.Student;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -40,5 +42,18 @@ public class StudentService {
                 }).toList();
 
         return studentResponseList;
+    }
+
+    public boolean login(LoginRequestDto dto){
+
+        Optional<Student> optionalstd = repo.findByUsn(dto.getUsn());
+
+        if(optionalstd.isEmpty())
+                return false;
+
+        Student std = optionalstd.get();
+
+        return std.getPassword().equals(dto.getPassword());
+
     }
 }

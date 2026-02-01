@@ -1,5 +1,6 @@
 package com.example.login.controller;
 
+import com.example.login.dto.LoginRequestDto;
 import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
 import com.example.login.service.StudentService;
@@ -30,5 +31,16 @@ public class StudentController {
     @GetMapping("/students")
     public List<StudentResponseDto> getAllStudent(){
         return service.getAllStudent();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto dto){
+
+        boolean result = service.login(dto);
+
+        if(result)
+            return ResponseEntity.ok("login successful");
+        else
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid usn or password");
     }
 }
