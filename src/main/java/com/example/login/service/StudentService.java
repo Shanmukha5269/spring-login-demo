@@ -5,6 +5,7 @@ import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
 import com.example.login.model.Student;
 import com.example.login.repository.StudentRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository repo;
+    private final PasswordEncoder encoder;
 
-    public StudentService(StudentRepository repo){
+    public StudentService(StudentRepository repo, PasswordEncoder encoder){
         this.repo = repo;
+        this.encoder = encoder;
     }
 
     public void addStudent(@RequestBody StudentRequestDto dto){
@@ -25,7 +28,7 @@ public class StudentService {
 
         std.setUsn(dto.getUsn());
         std.setName(dto.getName());
-        std.setPassword(dto.getPassword());
+        std.setPassword(encoder.encode(dto.getPassword()));
         repo.save(std);
     }
 
@@ -53,7 +56,6 @@ public class StudentService {
 
         Student std = optionalstd.get();
 
-        return std.getPassword().equals(dto.getPassword());
-
+        return encoder.matches(dto.getPassword(), std.getPassword());
     }
 }
