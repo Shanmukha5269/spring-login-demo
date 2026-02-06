@@ -1,15 +1,13 @@
 package com.example.login.controller;
 
+import com.example.login.component.TokenStore;
 import com.example.login.dto.LoginRequestDto;
 import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
 import com.example.login.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,9 +15,11 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
+    private final TokenStore tokenStore;
 
-    public StudentController(StudentService service){
+    public StudentController(StudentService service, TokenStore tokenStore){
         this.service = service;
+        this.tokenStore = tokenStore;
     }
 
     @PostMapping("/students")
@@ -29,7 +29,11 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public List<StudentResponseDto> getAllStudent(){
+    public List<StudentResponseDto> getAllStudent(@RequestHeader("X-Auth-Token") String token){
+
+        if(!tokenStore.isValid(token))
+            throw new RuntimeException("Unauthorized");
+
         return service.getAllStudent();
     }
 
@@ -42,5 +46,13 @@ public class StudentController {
             return ResponseEntity.ok("login successful");
         else
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid usn or password");
+    }
+
+    @PostMapping("/get-token")
+    public String loginToken(@RequestBody LoginRequestDto dto){
+
+        String token = service.loginToken(dto);
+
+        return token;
     }
 }
