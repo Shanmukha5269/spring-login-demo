@@ -14,7 +14,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/students").permitAll()
-                        .requestMatchers("/get-token").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

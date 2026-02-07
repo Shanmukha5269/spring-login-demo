@@ -41,18 +41,11 @@ public class StudentController {
     public ResponseEntity<String> login(@RequestBody LoginRequestDto dto){
 
         boolean result = service.login(dto);
-
-        if(result)
-            return ResponseEntity.ok("login successful");
-        else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid usn or password");
-    }
-
-    @PostMapping("/get-token")
-    public String loginToken(@RequestBody LoginRequestDto dto){
-
         String token = service.loginToken(dto);
 
-        return token;
+        if(result)
+            return ResponseEntity.ok("login successful and token is "  + token);
+        else
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid usn or password");
     }
 }

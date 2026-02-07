@@ -1,6 +1,5 @@
 package com.example.login.service;
 
-import com.example.login.component.TokenStore;
 import com.example.login.dto.LoginRequestDto;
 import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
@@ -9,23 +8,21 @@ import com.example.login.repository.StudentRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class StudentService {
 
     private final StudentRepository repo;
     private final PasswordEncoder encoder;
-    private final TokenStore tokenStore;
+    private final TokenService tokenService;
 
-    public StudentService(StudentRepository repo, PasswordEncoder encoder, TokenStore tokenStore){
+    public StudentService(StudentRepository repo, PasswordEncoder encoder, TokenService tokenService){
         this.repo = repo;
         this.encoder = encoder;
-        this.tokenStore = tokenStore;
+        this.tokenService = tokenService;
     }
 
     public void addStudent(@RequestBody StudentRequestDto dto){
@@ -75,8 +72,7 @@ public class StudentService {
         if(!encoder.matches(dto.getPassword(),std.getPassword()))
             return "Invalid password";
 
-        String token = UUID.randomUUID().toString();
-        tokenStore.store(token,std.getName());
+        String token = tokenService.generateToken(std.getName());
 
         return token;
     }
