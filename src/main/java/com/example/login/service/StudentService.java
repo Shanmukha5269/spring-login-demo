@@ -8,21 +8,19 @@ import com.example.login.repository.StudentRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentService {
 
     private final StudentRepository repo;
     private final PasswordEncoder encoder;
-    private final TokenService tokenService;
+    private final JwtService jwtService;
 
-    public StudentService(StudentRepository repo, PasswordEncoder encoder, TokenService tokenService){
+    public StudentService(StudentRepository repo, PasswordEncoder encoder, JwtService jwtService){
         this.repo = repo;
         this.encoder = encoder;
-        this.tokenService = tokenService;
+        this.jwtService = jwtService;
     }
 
     public void addStudent(@RequestBody StudentRequestDto dto){
@@ -48,32 +46,13 @@ public class StudentService {
         return studentResponseList;
     }
 
-    public boolean login(LoginRequestDto dto){
+    public String login(LoginRequestDto dto){
 
-        Optional<Student> optionalstd = repo.findByUsn(dto.getUsn());
+        Student std = repo.findByUsn(dto.getUsn());
 
-        if(optionalstd.isEmpty())
-                return false;
-
-        Student std = optionalstd.get();
-
-        return encoder.matches(dto.getPassword(), std.getPassword());
-    }
-
-    public String loginToken(LoginRequestDto dto){
-
-        Optional<Student> optionalstd = repo.findByUsn(dto.getUsn());
-
-        if(optionalstd.isEmpty())
-            return "User not found";
-
-        Student std = optionalstd.get();
-
-        if(!encoder.matches(dto.getPassword(),std.getPassword()))
-            return "Invalid password";
-
-        String token = tokenService.generateToken(std.getName());
-
-        return token;
+        if(std != null && encoder.matches(dto.getPassword(), std.getPassword())){
+            return jwtService.generateToken(std.getName());
+        }
+        return "";
     }
 }

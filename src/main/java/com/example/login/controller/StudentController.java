@@ -1,9 +1,9 @@
 package com.example.login.controller;
 
-import com.example.login.component.TokenStore;
 import com.example.login.dto.LoginRequestDto;
 import com.example.login.dto.StudentRequestDto;
 import com.example.login.dto.StudentResponseDto;
+import com.example.login.service.JwtService;
 import com.example.login.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
-    private final TokenStore tokenStore;
+    private final JwtService jwtService;
 
-    public StudentController(StudentService service, TokenStore tokenStore){
+    public StudentController(StudentService service, JwtService jwtService){
         this.service = service;
-        this.tokenStore = tokenStore;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/students")
@@ -29,10 +29,10 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public List<StudentResponseDto> getAllStudent(@RequestHeader("X-Auth-Token") String token){
+    public List<StudentResponseDto> getAllStudent(){
 
-        if(!tokenStore.isValid(token))
-            throw new RuntimeException("Unauthorized");
+//        if(!jwtService.isValid(token))
+//            throw new RuntimeException("Unauthorized");
 
         return service.getAllStudent();
     }
@@ -40,10 +40,9 @@ public class StudentController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto dto){
 
-        boolean result = service.login(dto);
-        String token = service.loginToken(dto);
+        String token = service.login(dto);
 
-        if(result)
+        if(!token.isEmpty())
             return ResponseEntity.ok("login successful and token is "  + token);
         else
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid usn or password");
