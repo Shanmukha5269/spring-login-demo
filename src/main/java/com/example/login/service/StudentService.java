@@ -28,6 +28,7 @@ public class StudentService {
 
         std.setUsn(dto.getUsn());
         std.setName(dto.getName());
+        std.setRole(dto.getRole());
         std.setPassword(encoder.encode(dto.getPassword()));
         repo.save(std);
     }
@@ -51,7 +52,7 @@ public class StudentService {
         Student std = repo.findByUsn(dto.getUsn());
 
         if(std != null && encoder.matches(dto.getPassword(), std.getPassword())){
-            return jwtService.generateToken(std.getName());
+            return jwtService.generateToken(std.getName(), std.getRole());
         }
         return "";
     }

@@ -22,7 +22,7 @@ public class StudentController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/students")
+    @PostMapping("/register")
     public ResponseEntity<String> addStudent(@RequestBody StudentRequestDto dto){
         service.addStudent(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("Student created");
@@ -30,9 +30,6 @@ public class StudentController {
 
     @GetMapping("/students")
     public List<StudentResponseDto> getAllStudent(){
-
-//        if(!jwtService.isValid(token))
-//            throw new RuntimeException("Unauthorized");
 
         return service.getAllStudent();
     }

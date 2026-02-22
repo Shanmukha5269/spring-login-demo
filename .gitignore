@@ -12,7 +12,7 @@ mvnw
 mvnw.cmd
 .mvn
 
-src/main/resources
+.env
 .gitattributes
 
 
