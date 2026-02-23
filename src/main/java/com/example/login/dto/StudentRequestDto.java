@@ -1,11 +1,13 @@
 package com.example.login.dto;
 
+import com.example.login.model.Student;
+
 public class StudentRequestDto {
 
     private int usn;
     private String name;
     private String password;
-    private String role;
+    private Student.Role role;
 
     public int getUsn() {
         return usn;
@@ -31,11 +33,11 @@ public class StudentRequestDto {
         this.password = password;
     }
 
-    public String getRole() {
+    public Student.Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Student.Role role) {
         this.role = role;
     }
 }

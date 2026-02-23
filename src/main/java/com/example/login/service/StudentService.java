@@ -52,7 +52,7 @@ public class StudentService {
         Student std = repo.findByUsn(dto.getUsn());
 
         if(std != null && encoder.matches(dto.getPassword(), std.getPassword())){
-            return jwtService.generateToken(std.getName(), std.getRole());
+            return jwtService.generateToken(std.getName(), std.getRole().name());
         }
         return "";
     }

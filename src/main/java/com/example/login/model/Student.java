@@ -1,7 +1,6 @@
 package com.example.login.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,7 +14,15 @@ public class Student {
     @NotBlank
     private String name;
     private String password;
-    private String role;
+
+    public enum Role{
+        ADMIN,
+        USER
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     public int getUsn() {
         return usn;
@@ -41,11 +48,11 @@ public class Student {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
