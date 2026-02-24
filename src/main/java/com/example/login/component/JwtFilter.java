@@ -2,11 +2,13 @@ package com.example.login.component;
 
 import com.example.login.exception.JwtAuthenticationException;
 import com.example.login.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,13 +40,17 @@ public class JwtFilter extends OncePerRequestFilter{
         String header = request.getHeader("Authorization");
 
         if(header == null || !header.startsWith("Bearer")){
-            throw new JwtAuthenticationException("Invalid Authorization header");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid Authorization header");
+            return;
         }
 
         String token = header.substring(7);
 
         if(!jwtService.isValid(token)){
-            throw new JwtAuthenticationException("Token is not valid");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token is not valid or expired");
+            return;
         }
 
         String username = jwtService.extractUsername(token);

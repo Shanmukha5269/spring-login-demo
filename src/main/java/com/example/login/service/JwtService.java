@@ -1,5 +1,6 @@
 package com.example.login.service;
 
+import com.example.login.exception.JwtAuthenticationException;
 import com.example.login.model.Student;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
