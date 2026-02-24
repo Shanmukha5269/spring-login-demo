@@ -1,5 +1,6 @@
 package com.example.login.service;
 
+import com.example.login.model.Student;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,10 +23,10 @@ public class JwtService {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(String username, String role){
+    public String generateToken(String username, Student.Role role){
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role",role);
+        claims.put("role",role.name());
 
         return Jwts.builder()
                 .setClaims(claims)

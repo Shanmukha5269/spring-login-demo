@@ -1,5 +1,6 @@
 package com.example.login.component;
 
+import com.example.login.exception.JwtAuthenticationException;
 import com.example.login.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,17 +38,13 @@ public class JwtFilter extends OncePerRequestFilter{
         String header = request.getHeader("Authorization");
 
         if(header == null || !header.startsWith("Bearer")){
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid Authorization header");
-            return;
+            throw new JwtAuthenticationException("Invalid Authorization header");
         }
 
         String token = header.substring(7);
 
         if(!jwtService.isValid(token)){
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token is not valid");
-            return;
+            throw new JwtAuthenticationException("Token is not valid");
         }
 
         String username = jwtService.extractUsername(token);
